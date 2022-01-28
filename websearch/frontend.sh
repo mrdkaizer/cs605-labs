@@ -23,7 +23,7 @@ config() {
   done
 }
 
-test() {
+test_frontend() {
   local i=0
   local http_port
   while [ $i -lt ${FRONTEND_PER_SERVER_COUNT} ];
@@ -37,15 +37,6 @@ test() {
 }
 
 start() {
-  # local OPTIND o
-  # while getopts ":a:" o; do
-  #   case "${o}" in
-  #     *)
-  #       echo ${OPTARG}
-  #       ;;
-  #   esac
-  # done
-
   i=0
   while [ $i -lt ${FRONTEND_PER_SERVER_COUNT} ];
   do
@@ -68,6 +59,13 @@ start() {
   done
   
   sleep 20
+
+  i=0
+  while [ $i -lt ${FRONTEND_PER_SERVER_COUNT} ];
+  do
+    echo "Starting frontend server ${FRONTEND_SERVER} instance ${i}...DONE"
+    ((i=i+1))
+  done
 
   test_frontend
 }
