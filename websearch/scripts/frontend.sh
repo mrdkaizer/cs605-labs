@@ -1,13 +1,12 @@
 #!/bin/bash
 
 source common.config
-source common.sh
 
 config() {
   local i=1
   local port
   local tomcat_instance_dir
-  while [ $i -lt ${FRONTEND_PER_SERVER_COUNT} ];
+  while [ $i -lt ${FRONTEND_INSTANCES_PER_SERVER} ];
   do
     tomcat_instance_dir=${WEBSEARCH_HOME_DIR}/"tomcat"${i}
     cp -r ${WEBSEARCH_HOME_DIR}/tomcat ${tomcat_instance_dir}
@@ -26,7 +25,7 @@ config() {
 test_frontend() {
   local i=0
   local http_port
-  while [ $i -lt ${FRONTEND_PER_SERVER_COUNT} ];
+  while [ $i -lt ${FRONTEND_INSTANCES_PER_SERVER} ];
   do	
     echo "Test frontend server ${FRONTEND_SERVER} instance ${i}..."
     ((http_port=8080+$i))
@@ -38,7 +37,7 @@ test_frontend() {
 
 start() {
   i=0
-  while [ $i -lt ${FRONTEND_PER_SERVER_COUNT} ];
+  while [ $i -lt ${FRONTEND_INSTANCES_PER_SERVER} ];
   do
     echo "Starting frontend server ${FRONTEND_SERVER} instance ${i}..."
     
@@ -61,7 +60,7 @@ start() {
   sleep 20
 
   i=0
-  while [ $i -lt ${FRONTEND_PER_SERVER_COUNT} ];
+  while [ $i -lt ${FRONTEND_INSTANCES_PER_SERVER} ];
   do
     echo "Starting frontend server ${FRONTEND_SERVER} instance ${i}...DONE"
     ((i=i+1))

@@ -1,7 +1,6 @@
 #!/bin/bash
 
 source common.config
-source common.sh
 
 INDEX_SERVERS_COUNT=`wc -w <<< ${INDEX_SERVER}`
 
