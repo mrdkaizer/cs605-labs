@@ -72,7 +72,7 @@ start() {
 stop() {
   local username=$(whoami)
   echo "Stopping frontend server ${INDEX_SERVER}"
-  ssh ${INDEX_SERVER} "pkill -u ${username} java" 
+  ssh ${INDEX_SERVER} "ps aux | grep tomcat | awk '{print \$2}' | xargs kill -9"
 }
 
 $@

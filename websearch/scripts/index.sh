@@ -47,7 +47,7 @@ start() {
 stop() {
   local username=$(whoami)
   echo "Stopping index server ${INDEX_SERVER}"
-  ssh ${INDEX_SERVER} "pkill -u ${username} java" 
+  ssh ${INDEX_SERVER} "ps aux | grep dis_search | awk '{print \$2}' | xargs kill -9"
 }
 
 $@
