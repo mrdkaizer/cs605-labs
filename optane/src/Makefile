@@ -1,2 +1,2 @@
 lat: lat.c
-	gcc lat.c -o lat
+	gcc -g lat.c -o lat -D_GNU_SOURCE
