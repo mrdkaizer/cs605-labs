@@ -9,14 +9,14 @@ This lab tutorial will introduce you to [Persistent Memory](https://www.snia.org
 Persistent memory (or PMem) is a new type of memory technology that retains its content through power cycles and can be used as top-tier storage, which is why you may hear people refer to PMem as "storage-class memory" or SCM. 
 
 <figure>
-  <p align="center"><img src="doc/img/pmem_storage_pyramid.jpg"></p>
+  <p align="center"><img src="assets/pmem_storage_pyramid.jpg"></p>
   <figcaption><p align="center"><b>Figure</b>. Memory-storage hierarchy with Persistent Memory tier (Source: <a href="https://docs.pmem.io/">Persistent Memory Documentation</a>)</p></figcaption>
 </figure>
 
 Persistent memory provides a new entry in the memory-storage hierarchy that fills the performance/capacity gap. It's slower than DRAM, but provides higher throughput than SSD. Compared to DRAM, persistent memory modules come in much larger capacities and are less expensive per GB, however they are still more expensive than SSD. Memory contents remain even when system power goes down in the event of an unexpected power loss, user initiated shutdown, or system crash. This means that you can use persistent memory modules as ultra-fast, persistent storage. 
 
 <figure>
-  <p align="center"><img src="doc/img/optane_dcpmm.png"></p>
+  <p align="center"><img src="assets/optane_dcpmm.png"></p>
   <figcaption><p align="center"><b>Figure</b>. Intel Optane DC Persistent Memory Module</p></figcaption>
 </figure>
 
@@ -29,7 +29,7 @@ Intel Optane DC Persistent Memory supports both Memory (volatile) and App Direct
 The [Storage Network Industry Association (SNIA)](http://www.snia.org/) and several technology industry companies derived several standards, including the [NVM Programming Model](https://www.snia.org/tech_activities/standards/curr_standards/npm), to enable application development for persistent memory. The programming model has its roots in earlier work on persistent memory that was [published](https://dl.acm.org/doi/abs/10.1145/1961295.1950379) in academic research in 2011.
 
 <figure>
-  <p align="center"><img src="doc/img/snia_programming_model.png" height="400"></p>
+  <p align="center"><img src="assets/snia_programming_model.png" height="400"></p>
   <figcaption><p align="center"><b>Figure</b>. SNIA NVM Programming Model (Source: <a href="https://docs.pmem.io/">Persistent Memory Documentation</a>)</p></figcaption>
 </figure>
 
@@ -41,11 +41,34 @@ Directly accessing the physical media enables an unprecedented level of storage 
 
 ## Benchmarking Persistent Memory
 
-TODO: Motivate DAX. Use simple microbenchmark to measure performance for various write sizes through DAX and syscall interface. 
+This part introduces you to basic performance measuments of Intel Optane DC Persistent Memory hardware.
 
-List namespaces
+You will measure read latency by timing the average latency to random memory accesses to persistent memory using a memory-latency bound pointer-chasing benchmark, called MemLat.
+MemLat creates a pointer chain as an array of 64-bit integer elements. 
+The contents of each element dictate which one is read next; and each element is read exactly once. 
+You need to choose the array size to be much larger than the size of the last-level cache so that each element’s memory access results in a cache miss that is guaranteed to be served from memory.
+MemLat is memory-latency sensitive because the next element to be accessed is determined only after the current access completes.
 
-ndctl list
+To build MemLat, type the following commands:
+
+```
+$ cd src
+# make
+```
+
+You will use MemLat to evaluate three different access methods to persistent memory: memory load instructions, file read system calls over DAX, and file read systems calls over a block device. 
+
+### Block device
+
+You need to configure the NVDIMM namespace to use the ```sector``` mode, which presents the storage as a fast block device. 
+This mode is useful for legacy applications that have not been modified to use NVDIMM storage, or for applications that make use of the full I/O stack, including Device Mapper.
+
+A sector device can be used in the same way as any other block device on the system. You can create partitions or file systems on it, configure it as part of a software RAID set, or use it as the cache device for dm-cache.
+
+Devices in this mode are available at /dev/pmemNs. See the blockdev value listed after creating the namespace.
+
+
+<!-- ndctl list
 
 [
   {
@@ -68,36 +91,61 @@ ndctl list
     "align":2097152,
     "blockdev":"pmem2"
   }
-]
+] -->
 
+To configure the NVDIMM as a block device, type the following commands:
 
-Configure Sector mode:
+```
+$ sudo ndctl create-namespace --force --reconfig=namespace3.0 --mode=sector
+```
 
-sudo ndctl create-namespace --force --reconfig=namespace3.0 --mode=sector
+Then, to create a file system on it:
 
+```
 sudo mkfs -t xfs /dev/pmem3s
 sudo mount -o dax /dev/pmem3s /mnt/pmem3/
+```
 
-Create chain
+Now you are ready to use MemLat to measure access latency to Optane. 
 
+First, create a chain comprising one million elements, with element size of 4096 bytes:
+
+```
 sudo ./lat /mnt/pmem3/test 1 1000000 4096 4096 c
+```
 
-Run latency tests
+Then, run the latency test using direct file I/O:
 
+```
 sudo ./lat /mnt/pmem3/test 1 1000000 4096 4096 d
+```
 
-2070
+Direct file I/O makes an effort to transfer data synchronously without caching data in the OS page cache.
 
+Alternatively, you can run the latency test using regular file I/O that caches data in the OS page cache. 
+To ensure that file reads reach the Optane device, you need to ensure that the OS page cache doesn't hold any previously cached data. 
+
+<!-- 2070 -->
+
+```
 echo 1 | sudo tee /proc/sys/vm/drop_caches
+```
+
+```
 sudo ./lat /mnt/pmem3/test 1 1000000 4096 4096 f
+```
 
-2679
+<!-- 2679 -->
 
+When you repeat the measurement without clearing the OS page cache, you will notice a lower access latency. This is because file reads hit the OS page cache and avoid a trip to Optane.
+
+```
 sudo ./lat /mnt/pmem3/test 1 1000000 4096 4096 f
+```
 
-852
+<!-- 852 -->
 
-Configure DAX
+### Device Direct Access (DAX)
 
 sudo ndctl create-namespace --force --reconfig=namespace3.0 --mode=fsdax
 
