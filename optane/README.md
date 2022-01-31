@@ -392,5 +392,5 @@ The programming tutorial part is based on the blog post [An introduction to pmem
 
 ## References
 
-1. [Persistent Memory Quick Start Programming Tutorial
-](https://www.snia.org/educational-library/persistent-memory-quick-start-programming-tutorial-2016)
+1. [Persistent Memory Quick Start Programming Tutorial](https://www.snia.org/educational-library/persistent-memory-quick-start-programming-tutorial-2016)
+2. [Speeding Up I/O Workloads with Intel® Optane™ Persistent Memory Modules](https://www.intel.com/content/www/us/en/developer/articles/technical/speeding-up-io-workloads-with-intel-optane-dc-persistent-memory-modules.html)
