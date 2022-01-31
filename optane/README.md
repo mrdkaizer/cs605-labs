@@ -53,7 +53,7 @@ To build MemLat, type the following commands:
 
 ```
 $ cd src
-# make
+$ make
 ```
 
 You will use MemLat to evaluate three different access methods to persistent memory: memory load instructions, file read system calls over DAX, and file read systems calls over a block device. 
@@ -93,7 +93,7 @@ Devices in this mode are available at /dev/pmemNs. See the blockdev value listed
   }
 ] -->
 
-To configure the NVDIMM as a block device, type the following commands:
+To configure the NVDIMM as a block device, type the following command:
 
 ```
 $ sudo ndctl create-namespace --force --reconfig=namespace3.0 --mode=sector
@@ -145,32 +145,66 @@ sudo ./lat /mnt/pmem3/test 1 1000000 4096 4096 f
 
 <!-- 852 -->
 
-### Device Direct Access (DAX)
+### File System Direct Access (DAX)
 
+You need to configure the NVDIMM namespace to use the ```fsdax``` mode.
+This mode enables NVDIMM devices to support direct access programming as described in the Storage Networking Industry Association (SNIA) Non-Volatile Memory (NVM) Programming Model specification. 
+In this mode, I/O bypasses the storage stack of the kernel, and many Device Mapper drivers therefore cannot be used.
+
+You can create file systems on file system DAX devices.
+
+Devices in this mode are available at /dev/pmemN. See the blockdev value listed after creating the namespace.
+
+To configure the NVDIMM as a DAX device, type the following commands:
+
+```
 sudo ndctl create-namespace --force --reconfig=namespace3.0 --mode=fsdax
+```
 
+Then, to create a file system on it:
+
+```
 sudo mkfs -t xfs /dev/pmem3
 sudo mount -o dax /dev/pmem3 /mnt/pmem3/
+```
 
-Create chain
+Now you are ready to use MemLat to measure access latency to Optane. 
 
+First, create a chain comprising one million elements, with element size of 4096 bytes:
+
+```
 sudo ./lat /mnt/pmem3/test 1 1000000 4096 4096 c
+```
 
-sudo ./lat /mnt/pmem3/test 1 1000000 4096 4096 m
+Then, run the latency test using file read system calls:
 
-1274
-
+```
 sudo ./lat /mnt/pmem3/test 1 1000000 4096 4096 f
+```
 
-1991
+<!-- 1991 -->
 
-sudo ./lat /mnt/pmem3/test 1 1000000 4096 8 m
+Repeat the latency test using load instructions instead of read system calls:
 
-439
+```
+sudo ./lat /mnt/pmem3/test 1 1000000 4096 4096 m
+```
 
+<!-- 1274 -->
+
+You should observe a lower access latency when using load instructions. The performance benefit of load instructions over read system calls gets even larger when the access size is smaller:
+
+```
 sudo ./lat /mnt/pmem3/test 1 1000000 4096 8 f
+```
 
-1163
+<!-- 1163 -->
+
+```
+sudo ./lat /mnt/pmem3/test 1 1000000 4096 8 m
+```
+
+<!-- 439 -->
 
 ## Programming Persistent Memory
 
