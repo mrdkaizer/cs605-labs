@@ -1,6 +1,6 @@
 # Lab: Getting started with CloudLab
 
-You will do your labs and assignments for CS 499 using [CloudLab](http://cloudlab.us/). CloudLab is a research facility which provides bare-metal access and control over a substantial set of computing, storage, and networking resources. If you haven’t worked in CloudLab before, you need to register a CloudLab account.
+You will do your labs and assignments for CS 605 using [CloudLab](http://cloudlab.us/). CloudLab is a research facility which provides bare-metal access and control over a substantial set of computing, storage, and networking resources. If you haven’t worked in CloudLab before, you need to register a CloudLab account.
 
 This lab walks you through the CloudLab registration process and shows you how to start an experiment in CloudLab.
 
