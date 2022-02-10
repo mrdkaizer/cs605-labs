@@ -47,7 +47,7 @@ start() {
 stop() {
   local username=$(whoami)
   echo "Stopping index server ${INDEX_SERVER}"
-  ssh ${INDEX_SERVER} "kill -9 `pgrep -f dis_search`"
+  ssh ${INDEX_SERVER} "pkill -f dis_search"
 }
 
 $@
