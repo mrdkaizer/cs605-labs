@@ -2,6 +2,14 @@
 
 source common.config
 
+tomcat_instance_name() {
+ if [ $i -eq 0 ]; then 
+   echo "tomcat"
+ else
+   echo "tomcat"${i}
+ fi
+}
+
 config() {
   local i=1
   local port
@@ -36,17 +44,12 @@ test_frontend() {
 }
 
 start() {
-  i=0
+  local i=0
   while [ $i -lt ${FRONTEND_INSTANCES_PER_SERVER} ];
   do
     echo "Starting frontend server ${FRONTEND_SERVER} instance ${i}..."
     
-    local tomcat_instance_dir
-    if [ $i -eq 0 ]; then 
-      tomcat_instance_dir=${WEBSEARCH_HOME_DIR}/"tomcat"
-    else
-      tomcat_instance_dir=${WEBSEARCH_HOME_DIR}/"tomcat"${i}
-    fi
+    local tomcat_instance_dir=${WEBSEARCH_HOME_DIR}/$(tomcat_instance_name $i)
 
     ssh $FRONTEND_SERVER "
       cd ${tomcat_instance_dir}/logs; 
@@ -71,8 +74,18 @@ start() {
 
 stop() {
   local username=$(whoami)
-  echo "Stopping frontend server ${INDEX_SERVER}"
-  ssh ${INDEX_SERVER} "ps aux | grep tomcat | awk '{print \$2}' | xargs kill -9"
+
+  local i=0
+  while [ $i -lt ${FRONTEND_INSTANCES_PER_SERVER} ];
+  do
+    echo "Stopping frontend server ${FRONTEND_SERVER} instance ${i}..."
+    
+    local tomcat_instance_dir=${WEBSEARCH_HOME_DIR}/$(tomcat_instance_name $i)
+    ssh ${FRONTEND_SERVER} "ps aux | grep $(tomcat_instance_name $i) | grep -v grep | awk '{print \$2}' | xargs kill -9 2> /dev/null" 
+    
+    ((i=i+1))
+  done
+ 
 }
 
 $@
