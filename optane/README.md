@@ -1,4 +1,4 @@
-# Lab 6: Benchmarking and Learning Persistent Memory
+# Lab: Benchmarking and Learning Persistent Memory
 
 This lab tutorial will introduce you to [Persistent Memory](https://www.snia.org/education/what-is-persistent-memory), a new non-volatile memory technology that aims to transform the data landscape.
 
