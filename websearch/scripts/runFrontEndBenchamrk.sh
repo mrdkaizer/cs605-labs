@@ -13,9 +13,9 @@ FRONTEND_INSTANCES_PER_SERVER=$thread
 
 WEBSEARCH_HOME_DIR=\"/local/websearch\"" > ./common.config
 
-    ../frontend.sh stop
-    ../frontend.sh config
-    ../frontend.sh start
+    ./frontend.sh stop
+    ./frontend.sh config
+    ./frontend.sh start
     echo 'Press enter to continue, current front end threads:' $thread
     read line
 done

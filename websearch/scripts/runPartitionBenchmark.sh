@@ -13,9 +13,9 @@ FRONTEND_INSTANCES_PER_SERVER=20
 
 WEBSEARCH_HOME_DIR=\"/local/websearch\"" > ./common.config
 
-    ../index.sh stop
-    ../index.sh config
-    ../index.sh start
+    ./index.sh stop
+    ./index.sh config
+    ./index.sh start
     echo 'Press enter to continue, current partition threads:' $thread
     read line
 
