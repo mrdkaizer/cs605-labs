@@ -16,7 +16,7 @@ WEBSEARCH_HOME_DIR=\"/local/websearch\"" > ../scripts/common.config
     ../index.sh stop
     ../index.sh config
     ../index.sh start
-    echo 'Press enter to continue, current backend threads:' $thread
+    echo 'Press enter to continue, current partition threads:' $thread
     read line
 
 done

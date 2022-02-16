@@ -16,6 +16,6 @@ WEBSEARCH_HOME_DIR=\"/local/websearch\"" > ../scripts/common.config
     ../frontend.sh stop
     ../frontend.sh config
     ../frontend.sh start
-    echo 'Press enter to continue, current backend threads:' $thread
+    echo 'Press enter to continue, current front end threads:' $thread
     read line
 done
