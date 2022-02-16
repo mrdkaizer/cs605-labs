@@ -4,12 +4,12 @@ for thread in 1 2 4 8 16 32
 do
 
     echo "INDEX_SERVER=\"node0\"
-INDEX_THREADS=20
+INDEX_THREADS=1
 
 INDEXES_COUNT=$thread
 
 FRONTEND_SERVER=\"node0\"
-FRONTEND_INSTANCES_PER_SERVER=20
+FRONTEND_INSTANCES_PER_SERVER=1
 
 WEBSEARCH_HOME_DIR=\"/local/websearch\"" > ./common.config
 
