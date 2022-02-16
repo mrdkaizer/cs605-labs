@@ -11,7 +11,7 @@ INDEXES_COUNT=32
 FRONTEND_SERVER=\"node0\"
 FRONTEND_INSTANCES_PER_SERVER=20
 
-WEBSEARCH_HOME_DIR=\"/local/websearch\"" > ../scripts/common.config
+WEBSEARCH_HOME_DIR=\"/local/websearch\"" > ./common.config
 
     ../index.sh stop
     ../index.sh config

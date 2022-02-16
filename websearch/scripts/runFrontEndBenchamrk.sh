@@ -11,7 +11,7 @@ INDEXES_COUNT=32
 FRONTEND_SERVER=\"node0\"
 FRONTEND_INSTANCES_PER_SERVER=$thread
 
-WEBSEARCH_HOME_DIR=\"/local/websearch\"" > ../scripts/common.config
+WEBSEARCH_HOME_DIR=\"/local/websearch\"" > ./common.config
 
     ../frontend.sh stop
     ../frontend.sh config

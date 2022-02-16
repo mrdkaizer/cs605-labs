@@ -23,7 +23,7 @@ do
 done
 
 > aggregated_average
-var="$(cat results | grep "average"|cut -d ' ' -f2-)"
+var="$(cat results | grep -v "printing" | grep "average"|cut -d ' ' -f2-)"
 
 c=0
 result=0
