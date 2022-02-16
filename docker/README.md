@@ -1,4 +1,4 @@
-# Lab 4: Docker Containers
+# Lab: Docker Containers
 
 This tutorial aims to be the one-stop shop for getting your hands dirty with Docker. Apart from demystifying the Docker landscape, it'll give you hands-on experience with building and deploying your own webapps on the Cloud. 
 
